@@ -15,7 +15,7 @@ from .baseTest import TestStorcliMainClass
 
 
 # discover tests
-dataset_main_path = './tests/datatest/storcliSet/'
+dataset_main_path = './tests/datasest/storcliSet/'
 
 folders = [dataset_main_path +
            p for p in os.listdir(dataset_main_path)]

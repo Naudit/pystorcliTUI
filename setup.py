@@ -12,7 +12,7 @@
 #
 ################################################################
 
-from setuptools import setup
+from setuptools import setup, find_namespace_packages
 from subprocess import Popen, PIPE
 import os
 import re
@@ -72,6 +72,7 @@ def get_long_description():
 REQUIREMENTS = [
     'pyStorCLI2',
     'textual',
+    'textual-inputs',
 ]
 
 CLASSIFIERS = [
@@ -97,7 +98,7 @@ setup(
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/Naudit/pystorcliTUI",
-    packages=['pystorclitui'],
+    packages=[p for p in find_namespace_packages() if 'pystorclitui' in p],
     scripts=['bin/storcliTUI'],
     python_requires=">=3.8",
     include_package_data=True,
