@@ -11,12 +11,13 @@ import os
 from typing import List
 from pystorcli import StorCLI
 from .storclifile import StorcliCMDFile
+from pystorclitui.storclicmdtui import StorcliCMDTUI
 
 
 class TestStorcliMainClass():
 
     def get_cmdRunner(self, folder: str, options: List[str] = []):
-        return StorcliCMDFile(folder, options)
+        return StorcliCMDTUI(StorcliCMDFile(folder, options))
 
     def setupEnv(self, folder: str):
         # get cmdRunner

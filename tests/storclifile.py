@@ -62,4 +62,4 @@ class StorcliCMDFile(CMDRunner):
         """Verify and return full binary path
         """
 
-        return '/dev/null'
+        return '/sbin/storcli64'
