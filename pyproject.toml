@@ -1,0 +1,63 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2023, Rafael Leira & Naudit HPCN S.L. <rafael.leira@naudit.es>
+#
+# This program is licensed under BSD 3-clause license.
+# See LICENSE for details.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+################################################################
+
+[build-system]
+requires = ["setuptools", "setuptools-scm[toml]"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ['pystorclitui']
+
+[tool.setuptools_scm]
+write_to = "pystorclitui/version.py"
+local_scheme = "no-local-version"
+
+
+[project]
+name = "PyStorCLITUI"
+authors = [{ name = "Rafael Leira", email = "rafael.leira@naudit.es" }]
+description = "Python StorCLI TUI"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["storcli", "wrapper", "cli", "tui", "textual"]
+license = { text = "BSD-3-Clause" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'Intended Audience :: System Administrators',
+    'License :: OSI Approved :: BSD License',
+    'Natural Language :: English',
+    'Operating System :: POSIX',
+    'Topic :: System :: Hardware :: Hardware Drivers',
+    'Topic :: System :: Installation/Setup',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Programming Language :: Python',
+    'Development Status :: 3 - Alpha',
+]
+dependencies = ['pyStorCLI2 >= 0.6.2', 'textual >= 0.19.1']
+dynamic = ["version"]
+
+
+[project.urls]
+"Homepage" = "https://github.com/Naudit/pystorcliTUI"
+
+
+[project.scripts]
+storcliTUI = "pystorclitui.bin.storcliTUI:main"
+pystorcliTUI = "pystorclitui.bin.storcliTUI:main"
+
+
+[project.optional-dependencies]
+# Requirements only needed for development
+dev = ['pytest', 'pytest-cov', 'coveralls', 'pdoc', 'mypy']
