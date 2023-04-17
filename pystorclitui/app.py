@@ -155,3 +155,4 @@ class PyStorCLITUI(App):
 
         self.messageBox.content = 'Running: ' + ' '.join(message.cmdArgs)
         self.messageBox.visible = not message.finished
+        # self.messageBox.refresh()

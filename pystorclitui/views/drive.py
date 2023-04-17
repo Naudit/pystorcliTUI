@@ -54,9 +54,19 @@ class DriveView(DockView):
         self.options_grid.grid.add_row(
             "row", fraction=1, max_size=3)
         self.options_grid.grid.set_repeat(True, True)
-        # Place out widgets in to the layout
+        ###################################
+        #             Buttons             #
+        ###################################
+
+        # Spin button
+        if self.drive.spin == "up":
+            toogle_spin_label = "Spin down"
+        else:
+            toogle_spin_label = "Spin up"
         drive_spin_toggle_button = ButtonBox(
-            label="Spin Down", name="toggle_spin", style=button_style)
+            label=toogle_spin_label, name="toggle_spin", style=button_style)
+
+        #
         drive_reset_errors_button = ButtonBox(
             label="Reset Errors", name="reset_errors", style=button_style)
         drive_set_state_missing_button = ButtonBox(
@@ -74,3 +84,27 @@ class DriveView(DockView):
         # Dock the grids
         await self.dock(self.options_grid, edge="bottom", size=7)
         await self.dock(self.upper_grid, edge="top")
+
+    async def handle_button_pressed(self, message: ButtonPressed):
+        """Handle button presses"""
+
+        self.log(f"catch button pressed: {message.sender.name}")
+
+        if message.sender.name == "toggle_spin":
+            if self.drive.spin == "up":
+                self.drive.spin = "down"
+            else:
+                self.drive.spin = "up"
+            await self.update()
+        elif message.sender.name == "reset_errors":
+            self.drive.reset_errors()
+            await self.update()
+        elif message.sender.name == "set_missing":
+            self.drive.set_state("missing")
+            await self.update()
+        elif message.sender.name == "set_online":
+            self.drive.set_state("online")
+            await self.update()
+        elif message.sender.name == "toggle_blink":
+            self.drive.toggle_blink()
+            await self.update()
