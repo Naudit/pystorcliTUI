@@ -4,7 +4,7 @@ import rich.repr
 from dataclasses import dataclass
 from enum import Enum
 from functools import lru_cache
-from pystorcli import StorCLI, Controllers, Controller, Enclosures, Enclosure, Drive, VirtualDrives, VirtualDrive
+from pystorcli2 import StorCLI, Controllers, Controller, Enclosures, Enclosure, Drive, VirtualDrives, VirtualDrive
 from rich.console import RenderableType
 from rich.text import Text
 from textual import events

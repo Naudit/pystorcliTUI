@@ -7,8 +7,8 @@
 ################################################################
 
 
-from pystorcli.cmdRunner import CMDRunner
-from textual.widget import MessagePump
+from pystorcli2.cmdRunner import CMDRunner
+from textual.message_pump import MessagePump
 from textual.message import Message, MessageTarget
 from typing import List
 import subprocess
@@ -24,7 +24,8 @@ class StorcliExec(Message, bubble=True):
     def __init__(self, sender: MessageTarget, cmdArgs: List[str], finished=False) -> None:
         self.cmdArgs = cmdArgs
         self.finished = finished
-        super().__init__(sender)
+        super().__init__()
+        self._set_sender(sender)
 
 
 class StorcliCMDTUI(CMDRunner, MessagePump):
@@ -43,7 +44,7 @@ class StorcliCMDTUI(CMDRunner, MessagePump):
         """Runs a command and returns the output.
         """
         # Begin Execution
-        if self.emit_no_wait(StorcliExec(self, args, False)):
+        if self.post_message(StorcliExec(self, args, False)):
             self.log('Emited StorcliExec')
         else:
             self.log('Issue with StorcliExec')
@@ -53,7 +54,7 @@ class StorcliCMDTUI(CMDRunner, MessagePump):
             args=args, **kwargs)
 
         # End Execution
-        self.emit_no_wait(StorcliExec(self, args, True))
+        self.post_message(StorcliExec(self, args, True))
         return ret
 
     def binaryCheck(self, binary):

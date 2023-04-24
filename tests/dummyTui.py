@@ -22,7 +22,7 @@ class Main(TestStorcliMainClass):
         storcli = self.setupEnv(os.path.abspath(os.path.join(
             os.path.dirname(__file__), "dataset/dummyTui")))
 
-        PyStorCLITUI(storcli=storcli).run(log='./tui.log')
+        PyStorCLITUI(storcli=storcli).run()
 
 
 if __name__ == "__main__":
