@@ -1,64 +1,159 @@
+"""Provides a Textual application header widget."""
+
+from __future__ import annotations
+
 from datetime import datetime
-from logging import getLogger
 
-from rich.console import Console, ConsoleOptions, RenderableType
-from rich.panel import Panel
-from rich.repr import rich_repr, Result
-from rich.style import StyleType
-from rich.table import Table
-from rich.text import TextType
+from rich.text import Text
 
-from textual import events
+from textual.app import RenderResult
+from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.reactive import watch, Reactive
 
-log = getLogger("rich")
+
+class HeaderLeftText(Widget):
+    """Display a text on the left side of the header header."""
+
+    DEFAULT_CSS = """
+    HeaderLeftText {
+        dock: left;
+        padding: 0 1;
+        content-align: left middle;
+        background: $foreground-darken-1 5%;
+        color: $text;
+        text-opacity: 85%;
+        width: 33%;
+    }
+    """
+
+    text: Reactive[str] = Reactive("")
+
+    def render(self) -> RenderResult:
+        """Render the text
+
+        Returns:
+            The value to render.
+        """
+        return Text(self.text, no_wrap=True, overflow="ellipsis")
+
+
+class HeaderRightText(Widget):
+    """Display a text on the right side of the header header."""
+
+    DEFAULT_CSS = """
+    HeaderRightText {
+        dock: right;
+        padding: 0 1;
+        content-align: right middle;
+        background: $foreground-darken-1 5%;
+        color: $text;
+        text-opacity: 85%;
+        width: 33%;
+    }
+    """
+
+    text: Reactive[str] = Reactive("")
+
+    def render(self) -> RenderResult:
+        """Render the text
+
+        Returns:
+            The value to render.
+        """
+        return Text(self.text, no_wrap=True, overflow="ellipsis")
+
+
+class HeaderCenterText(Widget):
+    """Display a text on the center of the header header."""
+
+    DEFAULT_CSS = """
+    HeaderCenterText {
+        content-align: center middle;
+        background: $foreground-darken-1 5%;
+        color: $text;
+        text-opacity: 85%;
+        width: 100%;
+    }
+    """
+
+    text: Reactive[str] = Reactive("")
+    """The main title text."""
+
+    def render(self) -> RenderResult:
+        """Render the text
+
+        Returns:
+            The value to render.
+        """
+        return Text(self.text, no_wrap=True, overflow="ellipsis")
 
 
 class Header(Widget):
-    def __init__(
-        self,
-        *,
-        tall: bool = True,
-        style: StyleType = "white on dark_green",
-        clock: bool = True,
-    ) -> None:
-        super().__init__()
-        self.tall = tall
-        self.style = style
+    """A header widget with icon and clock."""
 
-    tall: Reactive[bool] = Reactive(True, layout=True)
-    style: Reactive[StyleType] = Reactive("white on blue")
+    DEFAULT_CSS = """
+    Header {
+        dock: top;
+        width: 100%;
+        background: $foreground 5%;
+        color: $text;
+        height: 1;
+    }
+    Header.-tall {
+        height: 3;
+    }
+    """
+
+    DEFAULT_CLASSES = ""
+
+    tall: Reactive[bool] = Reactive(False)
     left_title: Reactive[str] = Reactive("")
     center_title: Reactive[str] = Reactive("")
     right_title: Reactive[str] = Reactive("")
 
-    @property
-    def full_title(self) -> str:
-        return f"{self.title} - {self.sub_title}" if self.sub_title else self.title
+    """Set to `True` for a taller header or `False` for a single line header."""
 
-    def __rich_repr__(self) -> Result:
-        yield self.title
+    def __init__(
+        self,
+        show_clock: bool = False,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ):
+        """Initialise the header widget.
 
-    async def watch_tall(self, tall: bool) -> None:
-        self.layout_size = 3 if tall else 1
+        Args:
+            show_clock: ``True`` if the clock should be shown on the right of the header.
+            name: The name of the header widget.
+            id: The ID of the header widget in the DOM.
+            classes: The CSS classes of the header widget.
+        """
+        super().__init__(name=name, id=id, classes=classes)
+        self._show_clock = show_clock
 
-    def get_clock(self) -> str:
-        return datetime.now().time().strftime("%X")
+    def compose(self):
+        yield HeaderLeftText()
+        yield HeaderCenterText()
+        yield HeaderRightText()
 
-    def render(self) -> RenderableType:
-        header_table = Table.grid(padding=(0, 1), expand=True)
-        header_table.style = self.style
-        header_table.add_column(justify="left", ratio=0.5)
-        header_table.add_column("title", justify="center", ratio=1)
-        header_table.add_column("right_title", justify="right", ratio=0.5)
-        header_table.add_row(
-            self.left_title, self.center_title, self.right_title
-        )
-        header: RenderableType
-        header = Panel(
-            header_table, style=self.style) if self.tall else header_table
-        return header
+    def watch_tall(self, tall: bool) -> None:
+        self.set_class(tall, "-tall")
 
-    async def on_click(self, event: events.Click) -> None:
-        self.tall = not self.tall
+    def on_click(self):
+        pass
+        # self.toggle_class("-tall")
+
+    def on_mount(self) -> None:
+        def set_left_title(title: str) -> None:
+            self.query_one(HeaderLeftText).text = title
+
+        def set_center_title(title: str) -> None:
+            self.query_one(HeaderCenterText).text = title
+
+        def set_right_title(title: str) -> None:
+            self.query_one(HeaderRightText).text = title
+
+        self.watch(self, "left_title", set_left_title)
+        self.watch(self, "center_title", set_center_title)
+        self.watch(self, "right_title", set_right_title)
